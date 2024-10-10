@@ -3,6 +3,7 @@ import openpyxl
 
 
 def update_artist(artists, royalty_file, report_file):
+    # Loop through artists
     for artist in artists:
         wb_royalty = openpyxl.load_workbook(royalty_file)
         ws_royalty = wb_royalty[f'{artist}']
@@ -10,6 +11,7 @@ def update_artist(artists, royalty_file, report_file):
         wb_report = openpyxl.load_workbook(report_file)
         ws_report = wb_report['Sheet1']
 
+        # Define columns
         royalty_sku_col = 1 # 'A' column in the royalty file (1-based index)
         royalty_sales_col = 3 # 'C' column in the royalty file (1-based index)
         report_sku_col = 3 # 'C' column in the report (1-based index)
@@ -37,7 +39,7 @@ def update_artist(artists, royalty_file, report_file):
 
                 if royalty_sku == report_sku:
                     report_sales_value = ws_report.cell(row=row_report, column=report_sales_col).value
-
+                    
                     ws_royalty.cell(row=row_royalty, column=royalty_sales_col).value = report_sales_value # Update the royalty sales column with the report sales column
                     print(f"Updated SKU {royalty_sku} with sales value {report_sales_value}")
                     
