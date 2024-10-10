@@ -1,17 +1,13 @@
 import openpyxl
 
 
-class Update_Artist:
-    def __init__(self, royalty_file, report_file):
-        self.royalty_file = royalty_file
-        self.report_file = report_file
 
+def update_artist(artists, royalty_file, report_file):
+    for artist in artists:
+        wb_royalty = openpyxl.load_workbook(royalty_file)
+        ws_royalty = wb_royalty[f'{artist}']
 
-    def update_backland(self):
-        wb_royalty = openpyxl.load_workbook(self.royalty_file)
-        ws_royalty = wb_royalty['BACKLAND']
-
-        wb_report = openpyxl.load_workbook(self.report_file)
+        wb_report = openpyxl.load_workbook(report_file)
         ws_report = wb_report['Sheet1']
 
         royalty_sku_col = 1 # 'A' column in the royalty file (1-based index)
@@ -20,6 +16,7 @@ class Update_Artist:
         report_sales_col = 6 # 'F' column in the report (1-based index)
         report_pointer = 1 # Pointer to the next row in the report
 
+        print(f'Updating {artist}...')
         for row_royalty in range(3, ws_royalty.max_row + 1): # Loop through royalty rows
             royalty_sku = ws_royalty.cell(row=row_royalty, column=royalty_sku_col).value
             
@@ -48,52 +45,6 @@ class Update_Artist:
                     break # Move to the next royalty row
 
         # Save and close the workbook
-        wb_royalty.save(self.royalty_file)
+        wb_royalty.save(royalty_file)
         wb_report.close()
         wb_royalty.close()
-
-
-
-    def update_brouitt(self):
-        pass
-
-
-    def update_carothers(self):
-        pass
-
-
-    def update_edmon(self):
-        pass
-
-
-    def update_heath(self):
-        pass
-
-
-    def update_jensen(self):
-        pass
-
-
-    def update_konar(self):
-        pass
-
-
-    def update_metzger(self):
-        pass
-
-
-    def update_nickel(self):
-        pass
-
-
-    def update_parisi(self):
-        pass
-
-
-    def update_parkhurst(self):
-        pass
-
-
-    def update_renfro(self):
-        pass
-        

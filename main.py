@@ -1,6 +1,6 @@
 import tkinter.filedialog
 from datetime import datetime
-from artist import Update_Artist
+from artist import update_artist
 
 
 start_time = datetime.now()
@@ -8,25 +8,23 @@ start_time = datetime.now()
 
 def main():
     while True:
-        # Select artist
+        # Ask user if they want to update the royalties
         answer = input("Do you want to update the royalties? (Y/N): ")
 
         if answer.lower() == "y":
+            artists = ["BACKLAND", "BROUITT", "CAROTHERS", "EDMON", "HEATH", "JENSEN", "KONAR", "METZGER", "NICKEL", "PARISI", "PARKHURST", "RENFRO"]
+
             # Select royalty and report files
             royalty_file = tkinter.filedialog.askopenfilename(title="Select Royalty File", filetypes=[("Excel", "*.xlsx")])
             report_file = tkinter.filedialog.askopenfilename(title="Select Report File", filetypes=[("Excel", "*.xlsx")])
+
+            # Ensure all files are selected
+            if not royalty_file or not report_file:
+                print("One or more files were not selected. Please try again.")
+                continue
             
             # Update artist
-            print(f"Updating artist on {royalty_file} and {report_file}...")
-            Update_Artist(royalty_file, report_file).update_backland()
-            Update_Artist(royalty_file, report_file).update_brouitt()
-            Update_Artist(royalty_file, report_file).update_carothers()
-            Update_Artist(royalty_file, report_file).update_edmon()
-            Update_Artist(royalty_file, report_file).update_heath()
-            Update_Artist(royalty_file, report_file).update_jensen()
-            Update_Artist(royalty_file, report_file).update_konar()
-            Update_Artist(royalty_file, report_file).update_metzger()
-            Update_Artist(royalty_file, report_file).update_nickel()
+            update_artist(artists, royalty_file, report_file)
 
         elif answer.lower() == "n":
             break
