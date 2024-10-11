@@ -1,6 +1,6 @@
 import tkinter.filedialog
 from datetime import datetime
-from artist import update_artist
+from artist import update_sales, update_royalty
 
 
 start_time = datetime.now()
@@ -24,7 +24,8 @@ def main():
                 continue
             
             # Update artist
-            update_artist(artists, royalty_file, report_file)
+            update_sales(artists, royalty_file, report_file)
+            update_royalty(artists, royalty_file)
 
         elif answer.lower() == "n":
             break
