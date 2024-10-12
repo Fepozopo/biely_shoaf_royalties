@@ -1,3 +1,5 @@
+import datetime
+import os
 import openpyxl
 
 
@@ -19,7 +21,7 @@ def update_sales(artists, royalty_file, report_file):
         report_pointer = 1 # Pointer to the next row in the report
 
         print(f'Updating {artist}...')
-        for row in range(3, ws_royalty.max_row + 1): # Loop through royalty rows
+        for row in range(5, ws_royalty.max_row + 1): # Loop through royalty rows
             royalty_sku = ws_royalty.cell(row=row, column=royalty_sku_col).value
             
             if royalty_sku is None:
@@ -72,10 +74,11 @@ def update_royalty(artists, royalty_file):
         sales_col = 3 # 'C' column in the royalty file (1-based index)
         rate_col = 4 # 'D' column in the royalty file (1-based index)
         earned_col = 5 # 'E' column in the royalty file (1-based index)
+        due_col = 6 # 'F' column in the royalty file (1-based index)
         new_balance_col = 7 # 'G' column in the royalty file (1-based index)
 
         print(f'Updating {artist}...')
-        for row in range(3, ws.max_row + 1): # Loop through royalty rows
+        for row in range(5, ws.max_row + 1): # Loop through royalty rows
             sku = ws.cell(row=row, column=sku_col).value
 
             if sku is None:
@@ -89,6 +92,10 @@ def update_royalty(artists, royalty_file):
             ws.cell(row=row, column=earned_col).value = float(ws.cell(row=row, column=sales_col).value * (ws.cell(row=row, column=rate_col).value / 100))
             print(f"Updated SKU {sku} with earned value {ws.cell(row=row, column=earned_col).value}")
 
+            # Calculate the due_col using the formula '=MAX(0, earned_col - balance_col)'
+            ws.cell(row=row, column=due_col).value = float(max(0, ws.cell(row=row, column=earned_col).value - ws.cell(row=row, column=balance_col).value))
+            print(f"Updated SKU {sku} with due value {ws.cell(row=row, column=due_col).value}")
+
             # Calculate the new balance by subtracting earned_col from balance_col using the formula '=MAX(0, balance_col - earned_col)'
             ws.cell(row=row, column=new_balance_col).value = float(max(0, ws.cell(row=row, column=balance_col).value - ws.cell(row=row, column=earned_col).value))
             print(f"Updated SKU {sku} with new balance value {ws.cell(row=row, column=new_balance_col).value}")
@@ -97,3 +104,38 @@ def update_royalty(artists, royalty_file):
         # Save and close the workbook
         wb.save(royalty_file)
         wb.close()
+
+
+def update_dates(artists, royalty_file, report_file):
+    
+    # Loop through artists
+    for artist in artists:
+        wb_royalty = openpyxl.load_workbook(royalty_file)
+        ws_royalty = wb_royalty[f'{artist}']
+
+        wb_report = openpyxl.load_workbook(report_file)
+        ws_report = wb_report['Sheet1']
+
+        # Copy date from the report to the royalty file
+        ws_royalty.cell(row=3, column=1).value = ws_report.cell(row=4, column=2).value
+
+        # Save and close the workbook
+        wb_royalty.save(royalty_file)
+        wb_report.close()
+        wb_royalty.close()
+
+
+def rename_royalty_file(royalty_file):
+    # Get the last month
+    last_month = format(datetime.date.today().replace(day=1) - datetime.timedelta(days=1), '%B %Y')
+
+    # Rename the royalty file to include the last month
+    path = os.path.split(royalty_file)
+    new_royalty_file = path[0] + "/" + last_month + " Royalty.xlsx"
+
+    wb = openpyxl.load_workbook(royalty_file)
+    wb.save(new_royalty_file)
+    wb.close()
+    print(f"Renamed royalty file to {last_month} Royalty.xlsx")
+    return new_royalty_file
+    

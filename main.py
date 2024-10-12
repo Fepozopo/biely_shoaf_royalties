@@ -1,6 +1,6 @@
 import tkinter.filedialog
 from datetime import datetime
-from artist import update_sales, update_royalty
+from artist import update_sales, update_royalty, update_dates, rename_royalty_file
 
 
 start_time = datetime.now()
@@ -9,7 +9,7 @@ start_time = datetime.now()
 def main():
     while True:
         # Ask user if they want to update the royalties
-        answer = input("Do you want to update the royalties? (Y/N): ")
+        answer = input("Do you want to update the artist royalties? (Y/N): ")
 
         if answer.lower() == "y":
             artists = ["BACKLAND", "BROUITT", "CAROTHERS", "EDMON", "HEATH", "JENSEN", "KONAR", "METZGER", "NICKEL", "PARISI", "PARKHURST", "RENFRO"]
@@ -22,10 +22,15 @@ def main():
             if not royalty_file or not report_file:
                 print("One or more files were not selected. Please try again.")
                 continue
-            
-            # Update artist
-            update_sales(artists, royalty_file, report_file)
-            update_royalty(artists, royalty_file)
+
+            # Rename royalty file
+            new_royalty_file = rename_royalty_file(royalty_file)
+
+            # Update royalty and sales
+            update_dates(artists, new_royalty_file, report_file)
+            update_sales(artists, new_royalty_file, report_file)
+            update_royalty(artists, new_royalty_file)
+
 
         elif answer.lower() == "n":
             break
@@ -34,7 +39,7 @@ def main():
             print("Invalid input. Please enter 'Y' or 'N'.")
             continue
 
-    print(f"Updating artist complete. Time elapsed: {datetime.now() - start_time}")
+    print(f"Updating artist royalties complete. Time elapsed: {datetime.now() - start_time}")
 
 
 if __name__ == "__main__":
