@@ -12,9 +12,23 @@ def main():
         answer = input("Do you want to update the artist royalties? (Y/N): ")
 
         if answer.lower() == "y":
-            artists = ["BACKLAND", "BROUITT", "CAROTHERS", "EDMON", "HEATH", "JENSEN", "KONAR", "METZGER", "NICKEL", "PARISI", "PARKHURST", "RENFRO"]
+            # Select artists file, read it, and split it into a list
+            print("Select artists file:")
+            artists_file = tkinter.filedialog.askopenfilename(title="Select Artists File", filetypes=[("Text", "*.txt")])
+            artists_data = open(artists_file, "r", encoding="utf-8")
+            artists_lst = artists_data.read().splitlines()
+            artists_data.close()
+
+            # Ensure file is selected
+            if not artists_file:
+                print("File was not selected. Please try again.")
+                continue
+
+            # Sort the artists list alphabetically
+            artists = sorted(artists_lst)
 
             # Select royalty and report files
+            print("Select royalty and report files:")
             royalty_file = tkinter.filedialog.askopenfilename(title="Select Royalty File", filetypes=[("Excel", "*.xlsx")])
             report_file = tkinter.filedialog.askopenfilename(title="Select Report File", filetypes=[("Excel", "*.xlsx")])
 
@@ -30,7 +44,6 @@ def main():
             update_dates(artists, new_royalty_file, report_file)
             update_sales(artists, new_royalty_file, report_file)
             update_royalty(artists, new_royalty_file)
-
 
         elif answer.lower() == "n":
             break
